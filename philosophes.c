@@ -1,3 +1,3 @@
 int main(int argc, char *argv[]) {
-  int N = argc[1];
+  int N = atoi(argc[1]);
 }
