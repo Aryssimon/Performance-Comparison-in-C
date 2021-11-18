@@ -22,7 +22,7 @@ int produce_int(){
     random = random << 1; // move one bit to left
     random = random | randomBit; // set the last bit to 0 or 1
   }
-  return int
+  return random;
 }
 
 void insert_item(int item) {
