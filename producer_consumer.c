@@ -8,8 +8,33 @@
 #define TOPRODUCE 1024
 
 const int BUFFER[N];
+int to_insert = 0;
+int to_remove = 0;
 const NB_CONSUMERS;
 const NB_PRODUCERS;
+
+int produce_int(){
+  //int nb_between_int_max_and_in_min = (rand() / RAND_MAX) * INT_MAX;
+  //if (rand() > RAND_MAX / 2) nb_between_int_max_and_in_min *= -1;
+  int random = 0;
+  for(int i = 0; i < 32; i++) { // do it 32 times
+    int randomBit = rand() > RAND_MAX / 2;  // 0 or 1
+    random = random << 1; // move one bit to left
+    random = random | randomBit; // set the last bit to 0 or 1
+  }
+  return int
+}
+
+void insert_item(int item) {
+  BUFFER[to_insert] = item;
+  to_insert = (to_insert +1)%N;
+}
+
+int remove_item(){
+  int item = BUFFER[to_remove];
+  to_remove = (to_remove+1)%N;
+  return item;
+}
 
 pthread_mutex_t mutex;
 sem_t empty;
@@ -22,16 +47,17 @@ sem_init(&full, 0 , 0);   // buffer vide
 void producer(void)
 {
   int item;
-  while(true)
+  for(int i = 0; i < TOPRODUCE; i++)
   {
-    item=produce(item);
+    int item=produce_int();
 
     while(rand() > RAND_MAX/10000); // simulate time of producing
 
     sem_wait(&empty); // attente d'une place libre
     pthread_mutex_lock(&mutex);
      // section critique
-     insert_item();
+     insert_item(item);
+     while(rand() > RAND_MAX/10000);
     pthread_mutex_unlock(&mutex);
     sem_post(&full); // il y a une place remplie en plus
   }
@@ -40,12 +66,13 @@ void producer(void)
 void consumer(void)
 {
  int item;
- while(true)
+ for(int i = 0; i < TOPRODUCE; i++)
  {
    sem_wait(&full); // attente d'une place remplie
    pthread_mutex_lock(&mutex);
-    // section critique
-    item=remove(item);
+   // section critique
+   item=remove_item();
+   while(rand() > RAND_MAX/10000);
    pthread_mutex_unlock(&mutex);
    sem_post(&empty); // il y a une place libre en plus
    while(rand() > RAND_MAX/10000); // simulate time of consuming
@@ -68,15 +95,6 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
     int error = pthread_create(&(phil[i]), NULL, &producer, NULL);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
     printf("Create thread %d\n", i);
-  }
-
-  //int nb_between_int_max_and_in_min = (rand() / RAND_MAX) * INT_MAX;
-  //if (rand() > RAND_MAX / 2) nb_between_int_max_and_in_min *= -1;
-  int random = 0;
-  for(int i = 0; i < 32; i++) { // do it 32 times
-    int randomBit = rand() > RAND_MAX / 2;  // 0 or 1
-    random = random << 1; // move one bit to left
-    random = random | randomBit; // set the first bit to 0 or 1
   }
 
   return 0;
