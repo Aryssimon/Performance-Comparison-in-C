@@ -3,8 +3,7 @@
 #include <pthread.h>
 
 const int CYCLES = 10000;
-const int N = 5;
-
+int N;
 pthread_t *phil;
 pthread_mutex_t *baguette;
 
@@ -29,32 +28,40 @@ void* philosophe(void* arg) {
 }
 
 int main(int argc, char *argv[]) {
-//  N = atoi(argv[1]);
-  pthread_t init_phil[5] = {0};
-  pthread_mutex_t init_baguette[N];
-  phil = init_phil;
-  baguette = init_baguette;
+  N = atoi(argv[1]);
+  phil = (pthread_t*) malloc(sizeof(pthread_t) * (N + 1));
+  baguette = (pthread_mutex_t*) malloc(sizeof(pthread_mutex_t) * (N + 1));
 
   for(int i = 0; i < N; i++) {
     int error = pthread_mutex_init(&(baguette[i]), NULL);
     if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
+    printf("Init mutex %d\n", i);
   }
 
   for(int i = 0; i < N; i++) {
     int error = pthread_create(&(phil[i]), NULL, &philosophe, (void *) &i);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
+    printf("Create thread %d\n", i);
   }
 
   for(int i = 0; i < N; i++) {
-    fprintf(stderr, "pthread_join %p\n", phil[i]);
     int error = pthread_join(phil[i], NULL);
     if (error != 0) fprintf(stderr, "pthread_join failed\n");
+    printf("Join thread %d\n", i);
   }
-  /*
-  for(int i; i < N; i++) {
+  printf("Before first destroy and after last join\n");
+  for(int i=0; i < N; i++) {
     int error = pthread_mutex_destroy(&(baguette[i]));
     if (error != 0) fprintf(stderr, "pthread_mutex_destroy failed\n");
+    printf("Destroy mutex %d\n", i);
   }
-  */
+
+  printf("All joined \n");
+
+  free(phil);
+  free(baguette);
+
+  printf("All fred \n");
+
   return 0;
 }
