@@ -3,14 +3,18 @@
 #include <pthread.h>
 
 const int CYCLES = 10000;
-int N;
-pthread_t *phil;
-pthread_mutex_t *baguette;
+
+typedef struct {
+  int index;
+  int N;
+  pthread_mutex_t *baguette;
+} arguments;
 
 void* philosophe(void* arg) {
-  int *id=(int *) arg;
-  int left = *id;
-  int right = (left + 1) % N;
+  arguments *args = (arguments *) arg;
+  pthread_mutex_t *baguette = args->baguette;
+  int left = args->index;
+  int right = (left + 1) % args->N;
   for(int i = 0; i < CYCLES; i++) {
     // philosophe pense
     if(left<right) {
@@ -28,40 +32,36 @@ void* philosophe(void* arg) {
 }
 
 int main(int argc, char *argv[]) {
-  N = atoi(argv[1]);
-  phil = (pthread_t*) malloc(sizeof(pthread_t) * (N + 1));
-  baguette = (pthread_mutex_t*) malloc(sizeof(pthread_mutex_t) * (N + 1));
+  const int N = atoi(argv[1]);
+  pthread_t phil[N];
+  pthread_mutex_t baguette[N];
 
   for(int i = 0; i < N; i++) {
     int error = pthread_mutex_init(&(baguette[i]), NULL);
     if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
-    printf("Init mutex %d\n", i);
   }
 
+  arguments *all_args[N];
   for(int i = 0; i < N; i++) {
-    int error = pthread_create(&(phil[i]), NULL, &philosophe, (void *) &i);
+    arguments *args = (arguments *) malloc(sizeof(arguments));
+    args->index = i;
+    args->N = N;
+    args->baguette = baguette;
+    all_args[i] = args;
+    int error = pthread_create(&(phil[i]), NULL, &philosophe, (void *) args);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
-    printf("Create thread %d\n", i);
   }
 
   for(int i = 0; i < N; i++) {
     int error = pthread_join(phil[i], NULL);
     if (error != 0) fprintf(stderr, "pthread_join failed\n");
-    printf("Join thread %d\n", i);
+    free(all_args[i]);
   }
-  printf("Before first destroy and after last join\n");
+
   for(int i=0; i < N; i++) {
     int error = pthread_mutex_destroy(&(baguette[i]));
     if (error != 0) fprintf(stderr, "pthread_mutex_destroy failed\n");
-    printf("Destroy mutex %d\n", i);
   }
-
-  printf("All joined \n");
-
-  free(phil);
-  free(baguette);
-
-  printf("All fred \n");
 
   return 0;
 }
