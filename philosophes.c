@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-const int CYCLES = 10000;
+const int CYCLES = 100000;
 
 typedef struct {
   int index;
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     args->N = N;
     args->baguette = baguette;
     all_args[i] = args;
-    int error = pthread_create(&(phil[i]), NULL, &philosophe, (void *) args);
+    int error = pthread_create(&(phil[i]), NULL, &philosophe, (void *) all_args[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
   }
 

@@ -3,15 +3,22 @@
 #include <pthread.h>
 #include <limits.h>
 #include <math.h>
+#include <semaphore.h>
 
 #define N 8
 #define TOPRODUCE 1024
 
-const int BUFFER[N];
+int BUFFER[N];
 int to_insert = 0;
 int to_remove = 0;
-const NB_CONSUMERS;
-const NB_PRODUCERS;
+int NB_CONSUMERS;
+int NB_PRODUCERS;
+pthread_mutex_t mutex;
+sem_t empty;
+sem_t full;
+
+int count_prod = 0;
+int count_cons = 0;
 
 int produce_int(){
   //int nb_between_int_max_and_in_min = (rand() / RAND_MAX) * INT_MAX;
@@ -36,18 +43,11 @@ int remove_item(){
   return item;
 }
 
-pthread_mutex_t mutex;
-sem_t empty;
-sem_t full;
-
-pthread_mutex_init(&mutex, NULL);
-sem_init(&empty, 0 , N);  // buffer vide
-sem_init(&full, 0 , 0);   // buffer vide
-
-void producer(void)
+void* producer(void* args)
 {
   int item;
-  for(int i = 0; i < TOPRODUCE; i++)
+  int stop = *((int *) args);
+  for(int i = 0; i < stop; i++)
   {
     int item=produce_int();
 
@@ -57,22 +57,25 @@ void producer(void)
     pthread_mutex_lock(&mutex);
      // section critique
      insert_item(item);
-     while(rand() > RAND_MAX/10000);
+     count_prod ++;
+     //while(rand() > RAND_MAX/10000);
     pthread_mutex_unlock(&mutex);
     sem_post(&full); // il y a une place remplie en plus
   }
 }
 
-void consumer(void)
+void* consumer(void* args)
 {
  int item;
- for(int i = 0; i < TOPRODUCE; i++)
+ int stop = *((int *) args);
+ for(int i = 0; i < stop; i++)
  {
    sem_wait(&full); // attente d'une place remplie
    pthread_mutex_lock(&mutex);
    // section critique
    item=remove_item();
-   while(rand() > RAND_MAX/10000);
+   count_cons ++;
+   //while(rand() > RAND_MAX/10000);
    pthread_mutex_unlock(&mutex);
    sem_post(&empty); // il y a une place libre en plus
    while(rand() > RAND_MAX/10000); // simulate time of consuming
@@ -80,22 +83,56 @@ void consumer(void)
 }
 
 int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers>
+  srand(time(NULL));
+
+  int error = pthread_mutex_init(&mutex, NULL);
+  if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
+
+  error = sem_init(&empty, 0 , N);  // buffer vide
+  if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
+  error = sem_init(&full, 0 , 0);   // buffer rempli
+  if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
+
   NB_CONSUMERS = atoi(argv[1]);
   NB_PRODUCERS = atoi(argv[2]);
 
   pthread_t consumers[NB_CONSUMERS];
   pthread_t producers[NB_PRODUCERS];
 
-  for(int i = 0; i < NB_CONSUMERS; i++) {
-    int error = pthread_create(&(phil[i]), NULL, &consumer, NULL);
-    if (error != 0) fprintf(stderr, "pthread_create failed\n");
-    printf("Create thread %d\n", i);
-  }
+  int nb_to_produce[NB_PRODUCERS];
   for(int i = 0; i < NB_PRODUCERS; i++) {
-    int error = pthread_create(&(phil[i]), NULL, &producer, NULL);
+    nb_to_produce[i] = TOPRODUCE / NB_PRODUCERS;
+    if (i == NB_PRODUCERS - 1) nb_to_produce[i] += (TOPRODUCE % NB_PRODUCERS);
+    error = pthread_create(&(producers[i]), NULL, &producer, (void *)&nb_to_produce[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
-    printf("Create thread %d\n", i);
   }
+
+  int nb_to_consume[NB_CONSUMERS];
+  for(int i = 0; i < NB_CONSUMERS; i++) {
+    nb_to_consume[i] = TOPRODUCE / NB_CONSUMERS;
+    if (i == NB_CONSUMERS - 1) nb_to_consume[i] += TOPRODUCE % NB_CONSUMERS;
+    error = pthread_create(&(consumers[i]), NULL, &consumer, (void *)&nb_to_consume[i]);
+    if (error != 0) fprintf(stderr, "pthread_create failed\n");
+  }
+
+  for(int i = 0; i < NB_PRODUCERS; i++) {
+    error = pthread_join(producers[i], NULL);
+    if (error != 0) fprintf(stderr, "pthread_join failed\n");
+  }
+  for(int i = 0; i < NB_CONSUMERS; i++) {
+    error = pthread_join(consumers[i], NULL);
+    if (error != 0) fprintf(stderr, "pthread_join failed\n");
+  }
+
+  error = pthread_mutex_destroy(&mutex);
+  if (error != 0) fprintf(stderr, "pthread_mutex_destroy failed\n");
+
+  error = sem_destroy(&empty);
+  if (error != 0) fprintf(stderr, "sem_destroy failed\n");
+
+  error = sem_destroy(&full);
+  if (error != 0) fprintf(stderr, "sem_destroy failed\n");
+
 
   return 0;
 }
