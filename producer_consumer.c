@@ -83,16 +83,16 @@ void* consumer(void* args)
 int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers>
   NB_CONSUMERS = atoi(argv[1]);
   NB_PRODUCERS = atoi(argv[2]);
-  
+
   srand(time(NULL));
 
   int error = pthread_mutex_init(&mutex, NULL);
   if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
 
   error = sem_init(&empty, 0 , N);  // buffer vide
-  if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
+  if (error != 0) fprintf(stderr, "sem_init failed\n");
   error = sem_init(&full, 0 , 0);   // buffer rempli
-  if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
+  if (error != 0) fprintf(stderr, "sem_init failed\n");
 
   pthread_t consumers[NB_CONSUMERS];
   pthread_t producers[NB_PRODUCERS];
