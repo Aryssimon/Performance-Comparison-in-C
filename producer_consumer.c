@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <limits.h>
-#include <math.h>
 #include <semaphore.h>
 
 #define N 8
@@ -83,6 +81,9 @@ void* consumer(void* args)
 }
 
 int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers>
+  NB_CONSUMERS = atoi(argv[1]);
+  NB_PRODUCERS = atoi(argv[2]);
+  
   srand(time(NULL));
 
   int error = pthread_mutex_init(&mutex, NULL);
@@ -92,9 +93,6 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
   if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
   error = sem_init(&full, 0 , 0);   // buffer rempli
   if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
-
-  NB_CONSUMERS = atoi(argv[1]);
-  NB_PRODUCERS = atoi(argv[2]);
 
   pthread_t consumers[NB_CONSUMERS];
   pthread_t producers[NB_PRODUCERS];
