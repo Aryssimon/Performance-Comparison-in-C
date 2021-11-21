@@ -6,7 +6,7 @@ const int CYCLES = 100000;
 
 typedef struct {
   int index;
-  int N;
+  int N_BAGUETTES;
   pthread_mutex_t *baguette;
 } arguments;
 
@@ -14,7 +14,7 @@ void* philosophe(void* arg) {
   arguments *args = (arguments *) arg;
   pthread_mutex_t *baguette = args->baguette;
   int left = args->index;
-  int right = (left + 1) % args->N;
+  int right = (left + 1) % args->N_BAGUETTES;
   for(int i = 0; i < CYCLES; i++) {
     // philosophe pense
     if(left<right) {
@@ -34,9 +34,11 @@ void* philosophe(void* arg) {
 int main(int argc, char *argv[]) {
   const int N = atoi(argv[1]);
   pthread_t phil[N];
-  pthread_mutex_t baguette[N];
+  int N_BAGUETTES = N;
+  if (N == 1) N_BAGUETTES++;
+  pthread_mutex_t baguette[N_BAGUETTES];
 
-  for(int i = 0; i < N; i++) {
+  for(int i = 0; i < N_BAGUETTES; i++) {
     int error = pthread_mutex_init(&(baguette[i]), NULL);
     if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
   }
@@ -45,7 +47,7 @@ int main(int argc, char *argv[]) {
   for(int i = 0; i < N; i++) {
     arguments *args = (arguments *) malloc(sizeof(arguments));
     args->index = i;
-    args->N = N;
+    args->N_BAGUETTES = N_BAGUETTES;
     args->baguette = baguette;
     all_args[i] = args;
     int error = pthread_create(&(phil[i]), NULL, &philosophe, (void *) all_args[i]);
