@@ -3,8 +3,8 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-#define TOWRITE 640
-#define TOREAD 2560
+#define TOWRITE 64
+#define TOREAD 256
 
 int NB_WRITERS;
 int NB_READERS;
@@ -37,6 +37,7 @@ void* reader(void* args) {
     }
     pthread_mutex_unlock(&mutex);
   }
+  pthread_exit (NULL);
 }
 
 void* writer(void* args) {
@@ -57,6 +58,7 @@ void* writer(void* args) {
     pthread_mutex_unlock(&mutex_writer_count);
     sem_post(&db);
   }
+  pthread_exit (NULL);
 }
 
 int main(int argc, char *argv[]) {

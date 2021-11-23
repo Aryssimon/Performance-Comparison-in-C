@@ -60,6 +60,7 @@ void* producer(void* args)
     pthread_mutex_unlock(&mutex);
     sem_post(&full); // il y a une place remplie en plus
   }
+  pthread_exit (NULL);
 }
 
 void* consumer(void* args)
@@ -78,6 +79,7 @@ void* consumer(void* args)
    sem_post(&empty); // il y a une place libre en plus
    while(rand() > RAND_MAX/10000); // simulate time of consuming
  }
+ pthread_exit (NULL);
 }
 
 int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers>
