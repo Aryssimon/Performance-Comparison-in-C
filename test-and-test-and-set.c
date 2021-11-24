@@ -1,7 +1,9 @@
-#include "test-and-set.h"
+//#include "test-and-set.h"
+#include "test-and-test-and-set.h"
 #include<stdlib.h>
 #include<stdio.h>
 #include <pthread.h>
+
 
 int *mutex;
 int counter = 0;
@@ -20,18 +22,21 @@ int lock_init(int **locker){
   return 0;
 }
 
-int lock_ts(int *locker){
-  while(test_and_set(locker));
-  return 0;
+int lock_tts(int *locker){
+    while(test_and_set(locker)){
+        while(*locker);
+    }
+    return 0;
 }
 
-int unlock_ts(int *locker){
-  asm ("movl $0, %%eax\n"
-       "xchgl %%eax, %0"
-  : "+m"(*locker)
-  :
-  : "eax");
-  return 0;
+int unlock_tts(int *locker){
+asm ("movl $0, %%eax\n"
+    "xchgl %%eax, %0"
+: "+m"(*locker)
+:
+: "eax");
+
+return 0;
 }
 
 void* thread_work(void* arg){
@@ -40,10 +45,10 @@ void* thread_work(void* arg){
   int personal_counter = 0;
   while(1) {
     printf("Before lock \n");
-    lock_ts(mutex);
+    lock_tts(mutex);
     printf("Inside lock \n");
     if (counter == NB_SECTIONS) {
-      unlock_ts(mutex);
+      unlock_tts(mutex);
       break;
     }
     printf("Section critique start\n");
@@ -52,7 +57,7 @@ void* thread_work(void* arg){
     stop--;
     personal_counter++;
     printf("Section critique end\n");
-    unlock_ts(mutex);
+    unlock_tts(mutex);
     printf("Unlock \n");
   }
   printf("personal counter = %d\n",personal_counter);
@@ -88,3 +93,4 @@ int main(int argc, char const *argv[]) {
 
   return 0;
 }
+
