@@ -5,51 +5,26 @@
 int mutexValue = 0;
 int *mutex = &mutexValue;
 int counter = 0;
-const int NB_SECTIONS = 16;
+const int NB_SECTIONS = 6400;
+
+int test_and_set(int *locker){
+  int value = 1;
+  asm (
+       "xchg %2, %3"
+  : "+q" (value), "+m"(*locker));
+  return value;
+}
 
 int lock(int *locker){
-  asm ("enter:"
-       "mov %1, %%eax\n"
-       "xchg %%eax, %0\n"
-       "test %%eax, %%eax\n"
-       "jnz enter;"
-  : "=m" (*locker)
-  : "m" (*locker)
-  : "eax");
-
-  /*int lockerValue = -1;
-  while (lockerValue != 0) { // Loop until the locker is free
-    asm ("enter:"
-         "mov %1, %%eax\n"
-         "xchg %%eax, %0"
-         "test %%eax, %%eax"
-         "jnz enter;"
-    : "=m" (lockerValue)
-    : "m" (*locker)
-    : "eax");
-  }
-  // Lock the locker (set to 1)
-  asm ("mov $1, %%eax\n"
-       "xchg %%eax, %0"
-  : "=m" (*locker)
-  : "m" (*locker)
-  : "eax");
-
-  while (*locker != 0){
-    asm ("mov $1, %%eax\n"
-         "xchg %%eax, %0"
-    : "=m" (*locker)
-    : "eax");
-  }*/
-
+  while(test_and_set(locker) == 1);
   return 0;
 }
 
 int unlock(int *locker){
   asm ("mov $0, %%eax\n"
        "xchg %%eax, %0"
-  : "=m" (*locker)
-  : "m" (*locker)
+  : "+m"(*locker)
+  :
   : "eax");
 
   return 0;
@@ -58,11 +33,12 @@ int unlock(int *locker){
 void* thread_work(void* arg){
   int stop = *((int *) arg);
   printf("Thread start\n");
+  int personal_counter = 0;
   while(1) {
     printf("Before lock \n");
     lock(mutex);
     printf("Inside lock \n");
-    if (counter >= NB_SECTIONS) {
+    if (counter == NB_SECTIONS) {
       unlock(mutex);
       break;
     }
@@ -70,10 +46,12 @@ void* thread_work(void* arg){
     while(rand() > RAND_MAX/10000);
     counter++;
     stop--;
+    personal_counter++;
     printf("Section critique end\n");
     unlock(mutex);
     printf("Unlock \n");
   }
+  printf("personal counter = %d\n",personal_counter);
   pthread_exit (NULL);
 }
 
