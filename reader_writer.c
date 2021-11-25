@@ -3,8 +3,8 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-#define TOWRITE 64
-#define TOREAD 256
+#define TOWRITE 640
+#define TOREAD 2560
 
 int NB_WRITERS;
 int NB_READERS;
@@ -19,7 +19,6 @@ int writer_count = 0;
 
 void* reader(void* args) {
   for(int i = 0; i < TOREAD; i++) {
-    pthread_mutex_lock(&z);
     sem_wait(&reader_sem);
     pthread_mutex_lock(&mutex);
     readcount++;
@@ -28,7 +27,6 @@ void* reader(void* args) {
     }
     pthread_mutex_unlock(&mutex);
     sem_post(&reader_sem);
-    pthread_mutex_unlock(&z);
     while(rand() > RAND_MAX/10000);
     pthread_mutex_lock(&mutex);
     readcount--;
@@ -44,19 +42,20 @@ void* writer(void* args) {
   for(int i = 0; i < TOWRITE; i++) {
     pthread_mutex_lock(&mutex_writer_count);
     writer_count++;
-    if (writer_count == 1) {
-       sem_wait(&reader_sem);
+    if (writer_count == 1){
+      sem_wait(&reader_sem);
     }
     pthread_mutex_unlock(&mutex_writer_count);
     sem_wait(&db);
     while(rand() > RAND_MAX/10000);
+    sem_post(&db);
     pthread_mutex_lock(&mutex_writer_count);
-    writer_count --;
-    if (writer_count == 0) {
-       sem_post(&reader_sem);
+    writer_count--;
+    if (writer_count == 0){
+      sem_post(&reader_sem);
     }
     pthread_mutex_unlock(&mutex_writer_count);
-    sem_post(&db);
+
   }
   pthread_exit (NULL);
 }

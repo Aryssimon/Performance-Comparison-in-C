@@ -20,6 +20,11 @@ int lock_init(int **locker){
   return 0;
 }
 
+int lock_destroy(int **locker) {
+  free(*locker);
+  return 0;
+}
+
 int lock_ts(int *locker){
   while(test_and_set(locker));
   return 0;
@@ -85,6 +90,8 @@ int main(int argc, char const *argv[]) {
   }
 
   printf("Counter: %d\n", counter);
+
+  lock_destroy(&mutex);
 
   return 0;
 }

@@ -4,10 +4,11 @@
 #include<stdio.h>
 #include <pthread.h>
 
-
+/*
 int *mutex;
 int counter = 0;
 const int NB_SECTIONS = 1024;
+*/
 
 int test_and_set(int *locker){
   int value = 1;
@@ -19,6 +20,11 @@ int test_and_set(int *locker){
 int lock_init(int **locker){
   *locker = (int*) malloc(sizeof(int));
   *(*locker) = 0;
+  return 0;
+}
+
+int lock_destroy(int **locker) {
+  free(*locker);
   return 0;
 }
 
@@ -38,7 +44,7 @@ asm ("movl $0, %%eax\n"
 
 return 0;
 }
-
+/*
 void* thread_work(void* arg){
   int stop = *((int *) arg);
   printf("Thread start\n");
@@ -63,7 +69,10 @@ void* thread_work(void* arg){
   printf("personal counter = %d\n",personal_counter);
   pthread_exit (NULL);
 }
+*/
 
+
+/*
 int main(int argc, char const *argv[]) {
   const int NB_THREADS = atoi(argv[1]);
   const int NB_PER_THREAD = NB_SECTIONS / NB_THREADS;
@@ -91,6 +100,8 @@ int main(int argc, char const *argv[]) {
 
   printf("Counter: %d\n", counter);
 
+  lock_destroy(&mutex);
+
   return 0;
 }
-
+*/

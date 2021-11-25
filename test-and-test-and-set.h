@@ -6,6 +6,8 @@ int test_and_set(int *locker);
 
 int lock_init(int **locker);
 
+int lock_destroy(int **locker);
+
 int lock_tts(int *locker);
 
 int unlock_tts(int *locker);

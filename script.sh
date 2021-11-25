@@ -6,7 +6,7 @@ out_philosophes="philosophes_perf_eval.csv"
 out_producer_consumer="producer_consumer_perf_eval.csv"
 out_reader_writer="reader_writer_perf_eval.csv"
 out_ts="test_and_set_perf_eval.csv"
-out_tts="test_and_test_and_set"
+out_tts="test_and_test_and_set_perf_eval.csv"
 all_csv=($out_philosophes $out_producer_consumer $out_reader_writer $out_ts $out_tts)
 
 
