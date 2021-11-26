@@ -15,8 +15,4 @@ int unlock(int *locker);
 void* thread_work(void* arg);
 
 
-
-
-
-
 #endif //TEST_AND_SET

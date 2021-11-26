@@ -3,17 +3,14 @@
 #include <pthread.h>
 #include <semaphore.h>
 
+#include "../headers/producer_consumer.h"
+
 #define N 8
-#define TOPRODUCE 1024
 
 int BUFFER[N];
 int to_insert = 0;
 int to_remove = 0;
-int NB_CONSUMERS;
-int NB_PRODUCERS;
-pthread_mutex_t mutex;
-sem_t empty;
-sem_t full;
+
 
 int count_prod = 0;
 int count_cons = 0;
@@ -44,21 +41,21 @@ int remove_item(){
 void* producer(void* args)
 {
   int item;
-  int stop = *((int *) args);
-  for(int i = 0; i < stop; i++)
+  pc_args* prod_args = (pc_args *) args;
+  for(int i = 0; i < prod_args->stop; i++)
   {
     int item=produce_int();
 
     while(rand() > RAND_MAX/10000); // simulate time of producing
 
-    sem_wait(&empty); // attente d'une place libre
-    pthread_mutex_lock(&mutex);
+    sem_wait(prod_args->empty); // attente d'une place libre
+    pthread_mutex_lock(prod_args->mutex);
      // section critique
      insert_item(item);
      count_prod ++;
      //while(rand() > RAND_MAX/10000);
-    pthread_mutex_unlock(&mutex);
-    sem_post(&full); // il y a une place remplie en plus
+    pthread_mutex_unlock(prod_args->mutex);
+    sem_post(prod_args->full); // il y a une place remplie en plus
   }
   pthread_exit (NULL);
 }
@@ -66,73 +63,18 @@ void* producer(void* args)
 void* consumer(void* args)
 {
  int item;
- int stop = *((int *) args);
- for(int i = 0; i < stop; i++)
+ pc_args* cons_args = (pc_args *) args;
+ for(int i = 0; i < cons_args->stop; i++)
  {
-   sem_wait(&full); // attente d'une place remplie
-   pthread_mutex_lock(&mutex);
+   sem_wait(cons_args->full); // attente d'une place remplie
+   pthread_mutex_lock(cons_args->mutex);
    // section critique
    item=remove_item();
    count_cons ++;
    //while(rand() > RAND_MAX/10000);
-   pthread_mutex_unlock(&mutex);
-   sem_post(&empty); // il y a une place libre en plus
+   pthread_mutex_unlock(cons_args->mutex);
+   sem_post(cons_args->empty); // il y a une place libre en plus
    while(rand() > RAND_MAX/10000); // simulate time of consuming
  }
  pthread_exit (NULL);
-}
-
-int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers>
-  NB_CONSUMERS = atoi(argv[1]);
-  NB_PRODUCERS = atoi(argv[2]);
-
-  srand(time(NULL));
-
-  int error = pthread_mutex_init(&mutex, NULL);
-  if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
-
-  error = sem_init(&empty, 0 , N);  // buffer vide
-  if (error != 0) fprintf(stderr, "sem_init failed\n");
-  error = sem_init(&full, 0 , 0);   // buffer rempli
-  if (error != 0) fprintf(stderr, "sem_init failed\n");
-
-  pthread_t consumers[NB_CONSUMERS];
-  pthread_t producers[NB_PRODUCERS];
-
-  int nb_to_produce[NB_PRODUCERS];
-  for(int i = 0; i < NB_PRODUCERS; i++) {
-    nb_to_produce[i] = TOPRODUCE / NB_PRODUCERS;
-    if (i == NB_PRODUCERS - 1) nb_to_produce[i] += (TOPRODUCE % NB_PRODUCERS);
-    error = pthread_create(&(producers[i]), NULL, &producer, (void *)&nb_to_produce[i]);
-    if (error != 0) fprintf(stderr, "pthread_create failed\n");
-  }
-
-  int nb_to_consume[NB_CONSUMERS];
-  for(int i = 0; i < NB_CONSUMERS; i++) {
-    nb_to_consume[i] = TOPRODUCE / NB_CONSUMERS;
-    if (i == NB_CONSUMERS - 1) nb_to_consume[i] += TOPRODUCE % NB_CONSUMERS;
-    error = pthread_create(&(consumers[i]), NULL, &consumer, (void *)&nb_to_consume[i]);
-    if (error != 0) fprintf(stderr, "pthread_create failed\n");
-  }
-
-  for(int i = 0; i < NB_PRODUCERS; i++) {
-    error = pthread_join(producers[i], NULL);
-    if (error != 0) fprintf(stderr, "pthread_join failed\n");
-  }
-  for(int i = 0; i < NB_CONSUMERS; i++) {
-    error = pthread_join(consumers[i], NULL);
-    if (error != 0) fprintf(stderr, "pthread_join failed\n");
-  }
-
-  error = pthread_mutex_destroy(&mutex);
-  if (error != 0) fprintf(stderr, "pthread_mutex_destroy failed\n");
-
-  error = sem_destroy(&empty);
-  if (error != 0) fprintf(stderr, "sem_destroy failed\n");
-
-  error = sem_destroy(&full);
-  if (error != 0) fprintf(stderr, "sem_destroy failed\n");
-
-
-  return 0;
 }

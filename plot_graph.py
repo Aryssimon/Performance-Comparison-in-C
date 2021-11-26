@@ -10,7 +10,7 @@ def show_plots(n_threads, averages, stdevs, name, labels):
   plot le tout avec matplotlib
   """
   fig1 = plt.figure()
-  std_scaling = 4
+  std_scaling = 1
   #plt.plot(n_threads,averages,color="red",linewidth=1.0, linestyle="-")
   colors = ["red", "green"]
   for i in range(len(averages)):

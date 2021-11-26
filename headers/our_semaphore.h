@@ -1,6 +1,7 @@
 #ifndef OUR_SEMAPHORE
 #define OUR_SEMAPHORE
 
+
 typedef struct {
   int val;
   int* mutex;
@@ -14,5 +15,6 @@ int our_sem_destroy(semaphore **sem);
 int semaphore_post(semaphore* sem);
 
 int semaphore_wait(semaphore* sem);
+
 
 #endif //OUR_SEMAPHORE
