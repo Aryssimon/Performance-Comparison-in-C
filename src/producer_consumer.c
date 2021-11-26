@@ -87,9 +87,10 @@ void* our_producer(void* args){
 
     semaphore_wait(prod_args->empty); // attente d'une place libre
     lock_tts(prod_args->mutex);
+    printf("item produced\n");
     // section critique
     insert_item(item);
-    *(prod_args->count)++;
+    *(prod_args->count) = *(prod_args->count)+1;
     unlock_tts(prod_args->mutex);
     semaphore_post(prod_args->full); // il y a une place remplie en plus
   }
@@ -105,7 +106,8 @@ void* our_consumer(void* args){
     lock_tts(cons_args->mutex);
     // section critique
     item=remove_item();
-    *(cons_args->count)++;
+    printf("item consumed\n");
+    *(cons_args->count) = *(cons_args->count)+1;
     unlock_tts(cons_args->mutex);
     semaphore_post(cons_args->empty); // il y a une place libre en plus
     while(rand() > RAND_MAX/10000); // simulate time of consuming

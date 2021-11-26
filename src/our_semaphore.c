@@ -16,6 +16,9 @@ int our_sem_init(semaphore **sem, unsigned int value) {
   (*sem)->val = value;
   lock_init(&((*sem)->mutex));
   lock_init(&((*sem)->wait_mutex));
+  if (value < 1){
+    lock_tts((*sem)->wait_mutex);
+  }
   return 0;
 }
 

@@ -10,7 +10,7 @@
 int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers>
   const int NB_CONSUMERS = atoi(argv[1]);
   const int NB_PRODUCERS = atoi(argv[2]);
-  const int TOPRODUCE = 1024;
+  const int TOPRODUCE = 20;
 
   int* mutex;
   semaphore* empty;
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
   pthread_t consumers[NB_CONSUMERS];
   pthread_t producers[NB_PRODUCERS];
 
-  int *count_prod;
+  int *count_prod = (int*)malloc(sizeof(int));
   *count_prod = 0;
   int nb_to_produce[NB_PRODUCERS];
   our_pc_args *all_prod_args[NB_PRODUCERS];
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
   }
 
-  int *count_cons;
+  int *count_cons = (int*)malloc(sizeof(int));
   *count_cons = 0;
   int nb_to_consume[NB_CONSUMERS];
   our_pc_args *all_cons_args[NB_CONSUMERS];
@@ -77,6 +77,8 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
   }
   printf("items produced : %d\n",*count_prod);
   printf("items consumed : %d\n",*count_cons);
+  free(count_prod);
+  free(count_cons);
 
   error = lock_destroy(&mutex);
   if (error != 0) fprintf(stderr, "pthread_mutex_destroy failed\n");
