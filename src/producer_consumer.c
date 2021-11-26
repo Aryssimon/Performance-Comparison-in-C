@@ -4,6 +4,8 @@
 #include <semaphore.h>
 
 #include "../headers/producer_consumer.h"
+#include "../headers/test_and_test_and_set.h"
+#include "../headers/our_semaphore.h"
 
 #define N 8
 
@@ -11,9 +13,6 @@ int BUFFER[N];
 int to_insert = 0;
 int to_remove = 0;
 
-
-int count_prod = 0;
-int count_cons = 0;
 
 int produce_int(){
   //int nb_between_int_max_and_in_min = (rand() / RAND_MAX) * INT_MAX;
@@ -50,10 +49,9 @@ void* producer(void* args)
 
     sem_wait(prod_args->empty); // attente d'une place libre
     pthread_mutex_lock(prod_args->mutex);
-     // section critique
-     insert_item(item);
-     count_prod ++;
-     //while(rand() > RAND_MAX/10000);
+    // section critique
+    insert_item(item);
+    //while(rand() > RAND_MAX/10000);
     pthread_mutex_unlock(prod_args->mutex);
     sem_post(prod_args->full); // il y a une place remplie en plus
   }
@@ -62,19 +60,55 @@ void* producer(void* args)
 
 void* consumer(void* args)
 {
- int item;
- pc_args* cons_args = (pc_args *) args;
- for(int i = 0; i < cons_args->stop; i++)
- {
-   sem_wait(cons_args->full); // attente d'une place remplie
-   pthread_mutex_lock(cons_args->mutex);
-   // section critique
-   item=remove_item();
-   count_cons ++;
-   //while(rand() > RAND_MAX/10000);
-   pthread_mutex_unlock(cons_args->mutex);
-   sem_post(cons_args->empty); // il y a une place libre en plus
-   while(rand() > RAND_MAX/10000); // simulate time of consuming
- }
- pthread_exit (NULL);
+  int item;
+  pc_args* cons_args = (pc_args *) args;
+  for(int i = 0; i < cons_args->stop; i++)
+  {
+    sem_wait(cons_args->full); // attente d'une place remplie
+    pthread_mutex_lock(cons_args->mutex);
+    // section critique
+    item=remove_item();
+    //while(rand() > RAND_MAX/10000);
+    pthread_mutex_unlock(cons_args->mutex);
+    sem_post(cons_args->empty); // il y a une place libre en plus
+    while(rand() > RAND_MAX/10000); // simulate time of consuming
+  }
+  pthread_exit (NULL);
+}
+
+void* our_producer(void* args){
+  int item;
+  our_pc_args* prod_args = (our_pc_args *) args;
+  for(int i = 0; i < prod_args->stop; i++)
+  {
+    int item=produce_int();
+
+    while(rand() > RAND_MAX/10000); // simulate time of producing
+
+    semaphore_wait(prod_args->empty); // attente d'une place libre
+    lock_tts(prod_args->mutex);
+    // section critique
+    insert_item(item);
+    *(prod_args->count)++;
+    unlock_tts(prod_args->mutex);
+    semaphore_post(prod_args->full); // il y a une place remplie en plus
+  }
+  pthread_exit (NULL);
+}
+
+void* our_consumer(void* args){
+  int item;
+  our_pc_args* cons_args = (our_pc_args *) args;
+  for(int i = 0; i < cons_args->stop; i++)
+  {
+    semaphore_wait(cons_args->full); // attente d'une place remplie
+    lock_tts(cons_args->mutex);
+    // section critique
+    item=remove_item();
+    *(cons_args->count)++;
+    unlock_tts(cons_args->mutex);
+    semaphore_post(cons_args->empty); // il y a une place libre en plus
+    while(rand() > RAND_MAX/10000); // simulate time of consuming
+  }
+  pthread_exit (NULL);
 }

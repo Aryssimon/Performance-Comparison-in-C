@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-#include "our_semaphore.h"
-#include "test-and-test-and-set.h"
+#include "../headers/our_semaphore.h"
+#include "../headers/test_and_test_and_set.h"
 
 
 semaphore* our_sem;
-int counter = 0;
-const int NB_SECTIONS = 1024;
+/*int counter = 0;
+const int NB_SECTIONS = 1024;*/
 
 
 int our_sem_init(semaphore **sem, unsigned int value) {
@@ -51,7 +51,7 @@ int semaphore_wait(semaphore* sem){
   return 0;
 }
 
-void* thread_work(void* arg){
+/*void* semaphore_work(void* arg){
   int threadNo = *((int *)arg);
   printf("Thread start %d\n", threadNo);
   int personal_counter = 0;
@@ -72,9 +72,9 @@ void* thread_work(void* arg){
   }
   printf("personal counter = %d\n",personal_counter);
   pthread_exit (NULL);
-}
+}*/
 
-int main(int argc, char const *argv[]) {
+/*int main(int argc, char const *argv[]) {
   const int NB_THREADS = atoi(argv[1]);
   const int NB_PER_THREAD = NB_SECTIONS / NB_THREADS;
   const int ADD_TO_LAST = NB_SECTIONS % NB_THREADS;
@@ -104,4 +104,4 @@ int main(int argc, char const *argv[]) {
   our_sem_destroy(&our_sem);
 
   return 0;
-}
+}*/

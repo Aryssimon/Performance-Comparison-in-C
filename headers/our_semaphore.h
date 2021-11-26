@@ -16,5 +16,7 @@ int semaphore_post(semaphore* sem);
 
 int semaphore_wait(semaphore* sem);
 
+void* semaphore_work(void* arg);
+
 
 #endif //OUR_SEMAPHORE
