@@ -26,9 +26,6 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
   pthread_t consumers[NB_CONSUMERS];
   pthread_t producers[NB_PRODUCERS];
 
-  int *count_prod = (int*)malloc(sizeof(int));
-  if (count_prod == NULL) fprintf(stderr, "malloc failed\n");
-  *count_prod = 0;
   int nb_to_produce[NB_PRODUCERS];
   our_pc_args *all_prod_args[NB_PRODUCERS];
   for(int i = 0; i < NB_PRODUCERS; i++) {
@@ -40,15 +37,11 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
     prod_args->empty = empty;
     prod_args->full = full;
     prod_args->stop = nb_to_produce[i];
-    prod_args->count = count_prod;
     all_prod_args[i] = prod_args;
     int error = pthread_create(&(producers[i]), NULL, &our_producer, (void *)all_prod_args[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
   }
 
-  int *count_cons = (int*)malloc(sizeof(int));
-  if (count_cons == NULL) fprintf(stderr, "malloc failed\n");
-  *count_cons = 0;
   int nb_to_consume[NB_CONSUMERS];
   our_pc_args *all_cons_args[NB_CONSUMERS];
   for(int i = 0; i < NB_CONSUMERS; i++) {
@@ -60,7 +53,6 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
     cons_args->empty = empty;
     cons_args->full = full;
     cons_args->stop = nb_to_consume[i];
-    cons_args->count = count_cons;
     all_cons_args[i] = cons_args;
     int error = pthread_create(&(consumers[i]), NULL, &our_consumer, (void *)all_cons_args[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
@@ -76,10 +68,6 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
     if (error != 0) fprintf(stderr, "pthread_join failed\n");
     free(all_cons_args[i]);
   }
-  printf("items produced : %d\n",*count_prod);
-  printf("items consumed : %d\n",*count_cons);
-  free(count_prod);
-  free(count_cons);
 
   lock_destroy(&mutex);
 

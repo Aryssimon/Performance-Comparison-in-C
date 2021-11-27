@@ -14,7 +14,6 @@ typedef struct {
   semaphore* empty;
   semaphore* full;
   int stop;
-  int* count;
 } our_pc_args;
 
 

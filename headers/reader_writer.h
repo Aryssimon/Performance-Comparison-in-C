@@ -14,7 +14,6 @@ typedef struct {
   int* mutex_writer;
   semaphore* db;
   semaphore* reader_sem;
-  int* count;
 } our_rw_args;
 
 void* reader(void* args);

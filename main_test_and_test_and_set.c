@@ -12,18 +12,15 @@ int main(int argc, char const *argv[]) {
   pthread_t threads[NB_THREADS];
 
 
-  printf("Init \n");
 
   for(int i = 0; i < NB_THREADS; i++) {
     int error = pthread_create(&(threads[i]), NULL, &thread_work, (void *) mutex);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
-    printf("Thread %d created\n", i);
   }
 
   for(int i = 0; i < NB_THREADS; i++) {
     int error = pthread_join(threads[i], NULL);
     if (error != 0) fprintf(stderr, "pthread_join failed\n");
-    printf("Thread %d joined\n", i);
   }
 
   lock_destroy(&mutex);

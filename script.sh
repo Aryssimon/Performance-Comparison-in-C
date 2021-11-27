@@ -31,7 +31,6 @@ done
 for (( i=1; i<=$N_CORES; i++ )) do
    echo "nb of threads : $i"
    for j in {1..5}; do
-      #echo "$j th test with $c threads"
       /usr/bin/time -o $out_our_philosophes -a -f "$i,%e" ./out/our_philosophes $i
       /usr/bin/time -o $out_philosophes -a -f "$i,%e" ./out/philosophes $i
       /usr/bin/time -o $out_tts -a -f "$i,%e" ./out/test_and_test_and_set $i

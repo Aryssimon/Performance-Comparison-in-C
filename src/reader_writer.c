@@ -70,7 +70,6 @@ void* our_reader(void* args){
     unlock_tts(reader_args->mutex_reader);
     semaphore_post(reader_args->reader_sem);
     while(rand() > RAND_MAX/10000);
-    *(reader_args->count) = *(reader_args->count) + 1;
     lock_tts(reader_args->mutex_reader);
     readcount--;
     if(readcount==0){
@@ -92,7 +91,6 @@ void* our_writer(void* args){
     unlock_tts(writer_args->mutex_writer);
     semaphore_wait(writer_args->db);
     while(rand() > RAND_MAX/10000);
-    *(writer_args->count) = *(writer_args->count) + 1;
     semaphore_post(writer_args->db);
     lock_tts(writer_args->mutex_writer);
     writer_count--;

@@ -10,7 +10,7 @@ int lock_destroy(int **locker);
 
 int lock_ts(int *locker);
 
-int unlock(int *locker);
+int unlock_ts(int *locker);
 
 void* thread_work(void* arg);
 

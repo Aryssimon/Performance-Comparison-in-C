@@ -26,8 +26,6 @@ int main(int argc, char *argv[]) {
   pthread_t writers[NB_WRITERS];
   pthread_t readers[NB_READERS];
 
-  int *count_writer = (int*)malloc(sizeof(int));
-  if (count_writer == NULL) fprintf(stderr, "malloc failed\n");
   our_rw_args *all_writers_args[NB_WRITERS];
   for(int i = 0; i < NB_WRITERS; i++) {
     our_rw_args *writer_args = (our_rw_args *) malloc(sizeof(our_rw_args));
@@ -36,14 +34,11 @@ int main(int argc, char *argv[]) {
     writer_args->mutex_writer = mutex_writer;
     writer_args->db = db;
     writer_args->reader_sem = reader_sem;
-    writer_args->count = count_writer;
     all_writers_args[i] = writer_args;
     int error = pthread_create(&(writers[i]), NULL, &our_writer, (void *) all_writers_args[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
   }
 
-  int *count_reader = (int*)malloc(sizeof(int));
-  if (count_reader == NULL) fprintf(stderr, "malloc failed\n");
   our_rw_args *all_readers_args[NB_READERS];
   for(int i = 0; i < NB_READERS; i++) {
     our_rw_args *reader_args = (our_rw_args *) malloc(sizeof(our_rw_args));
@@ -52,7 +47,6 @@ int main(int argc, char *argv[]) {
     reader_args->mutex_writer = mutex_writer;
     reader_args->db = db;
     reader_args->reader_sem = reader_sem;
-    reader_args->count = count_reader;
     all_readers_args[i] = reader_args;
     int error = pthread_create(&(readers[i]), NULL, &our_reader, (void *) all_readers_args[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
@@ -68,10 +62,6 @@ int main(int argc, char *argv[]) {
     if (error != 0) fprintf(stderr, "pthread_join failed\n");
     free(all_readers_args[i]);
   }
-  printf("items written : %d\n",*count_writer);
-  printf("items read : %d\n",*count_reader);
-  free(count_writer);
-  free(count_reader);
 
   lock_destroy(&mutex_reader);
   lock_destroy(&mutex_writer);

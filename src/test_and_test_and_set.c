@@ -45,24 +45,15 @@ int unlock_tts(int *locker){
 
 void* thread_work(void* arg){
   int *mutex = (int *) arg;
-  printf("Thread start\n");
-  int personal_counter = 0;
   while(1) {
-    printf("Before lock \n");
     lock_tts(mutex);
-    printf("Inside lock \n");
     if (counter == NB_SECTIONS) {
       unlock_tts(mutex);
       break;
     }
-    printf("Section critique start\n");
     while(rand() > RAND_MAX/10000);
     counter++;
-    personal_counter++;
-    printf("Section critique end\n");
     unlock_tts(mutex);
-    printf("Unlock \n");
   }
-  printf("personal counter = %d\n",personal_counter);
   pthread_exit (NULL);
 }
