@@ -7,8 +7,8 @@
 #include "../headers/test_and_test_and_set.h"
 #include "../headers/our_semaphore.h"
 
-#define TOWRITE 64
-#define TOREAD 256
+#define TOWRITE 640
+#define TOREAD 2560
 
 int readcount = 0;
 int writer_count = 0;

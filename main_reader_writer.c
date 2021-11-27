@@ -17,19 +17,16 @@ int main(int argc, char *argv[]) {
 
   int error = sem_init(&reader_sem, 0, 1);
   if (error != 0) fprintf(stderr, "sem_init failed\n");
-
   error = sem_init(&db, 0, 1);
   if (error != 0) fprintf(stderr, "sem_init failed\n");
 
   error = pthread_mutex_init(&mutex_reader,NULL);
   if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
-
   error = pthread_mutex_init(&mutex_writer,NULL);
   if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
 
   pthread_t writers[NB_WRITERS];
   pthread_t readers[NB_READERS];
-
 
   rw_args *all_writers_args[NB_WRITERS];
   for(int i = 0; i < NB_WRITERS; i++) {
@@ -43,7 +40,6 @@ int main(int argc, char *argv[]) {
     error = pthread_create(&(writers[i]), NULL, &writer, (void *) all_writers_args[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
   }
-
 
   rw_args *all_readers_args[NB_READERS];
   for(int i = 0; i < NB_READERS; i++) {
@@ -71,13 +67,11 @@ int main(int argc, char *argv[]) {
 
   error = pthread_mutex_destroy(&mutex_reader);
   if (error != 0) fprintf(stderr, "pthread_mutex_destroy failed\n");
-
   error = pthread_mutex_destroy(&mutex_writer);
   if (error != 0) fprintf(stderr, "pthread_mutex_destroy failed\n");
 
   error = sem_destroy(&reader_sem);
   if (error != 0) fprintf(stderr, "sem_destroy failed\n");
-
   error = sem_destroy(&db);
   if (error != 0) fprintf(stderr, "sem_destroy failed\n");
 

@@ -6,7 +6,7 @@
 #include "headers/producer_consumer.h"
 
 
-int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers>
+int main(int argc, char *argv[]) {
   const int NB_CONSUMERS = atoi(argv[1]);
   const int NB_PRODUCERS = atoi(argv[2]);
   const int TOPRODUCE = 1024;
@@ -20,9 +20,9 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
   int error = pthread_mutex_init(&mutex, NULL);
   if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
 
-  error = sem_init(&empty, 0 , 8);  // buffer vide
+  error = sem_init(&empty, 0 , 8);
   if (error != 0) fprintf(stderr, "sem_init failed\n");
-  error = sem_init(&full, 0 , 0);   // buffer rempli
+  error = sem_init(&full, 0 , 0);
   if (error != 0) fprintf(stderr, "sem_init failed\n");
 
   pthread_t consumers[NB_CONSUMERS];

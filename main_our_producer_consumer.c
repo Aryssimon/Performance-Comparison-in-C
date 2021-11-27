@@ -7,10 +7,10 @@
 #include "headers/test_and_test_and_set.h"
 #include "headers/our_semaphore.h"
 
-int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers>
+int main(int argc, char *argv[]) {
   const int NB_CONSUMERS = atoi(argv[1]);
   const int NB_PRODUCERS = atoi(argv[2]);
-  const int TOPRODUCE = 20;
+  const int TOPRODUCE = 1024;
 
   int* mutex;
   semaphore* empty;
@@ -20,8 +20,8 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
 
   lock_init(&mutex);
 
-  our_sem_init(&empty,8);  // buffer vide
-  our_sem_init(&full,0);   // buffer rempli
+  our_sem_init(&empty,8);
+  our_sem_init(&full,0);
 
   pthread_t consumers[NB_CONSUMERS];
   pthread_t producers[NB_PRODUCERS];
@@ -73,7 +73,6 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
 
   our_sem_destroy(&empty);
   our_sem_destroy(&full);
-
 
   return 0;
 }

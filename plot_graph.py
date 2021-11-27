@@ -4,11 +4,6 @@ import matplotlib.pyplot as plt
 from numpy.lib.function_base import average
 
 def show_plots(n_threads, averages, stdevs, name, labels):
-  """
-  calculer la moyenne
-  calculer les ecarts-types
-  plot le tout avec matplotlib
-  """
   fig1 = plt.figure()
   std_scaling = 1
   colors = ["red", "green"]
