@@ -34,6 +34,7 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
     nb_to_produce[i] = TOPRODUCE / NB_PRODUCERS;
     if (i == NB_PRODUCERS - 1) nb_to_produce[i] += (TOPRODUCE % NB_PRODUCERS);
     pc_args *prod_args = (pc_args *) malloc(sizeof(pc_args));
+    if (prod_args == NULL) fprintf(stderr, "malloc failed\n");
     prod_args->mutex = &mutex;
     prod_args->empty = &empty;
     prod_args->full = &full;
@@ -49,6 +50,7 @@ int main(int argc, char *argv[]) { // ./producer_consumer <consumers> <producers
     nb_to_consume[i] = TOPRODUCE / NB_CONSUMERS;
     if (i == NB_CONSUMERS - 1) nb_to_consume[i] += TOPRODUCE % NB_CONSUMERS;
     pc_args *cons_args = (pc_args *) malloc(sizeof(pc_args));
+    if (cons_args == NULL) fprintf(stderr, "malloc failed\n");
     cons_args->mutex = &mutex;
     cons_args->empty = &empty;
     cons_args->full = &full;

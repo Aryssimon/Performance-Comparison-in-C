@@ -34,6 +34,7 @@ int main(int argc, char *argv[]) {
   rw_args *all_writers_args[NB_WRITERS];
   for(int i = 0; i < NB_WRITERS; i++) {
     rw_args *writer_args = (rw_args *) malloc(sizeof(rw_args));
+    if (writer_args == NULL) fprintf(stderr, "malloc failed\n");
     writer_args->mutex_reader = &mutex_reader;
     writer_args->mutex_writer = &mutex_writer;
     writer_args->db = &db;
@@ -47,6 +48,7 @@ int main(int argc, char *argv[]) {
   rw_args *all_readers_args[NB_READERS];
   for(int i = 0; i < NB_READERS; i++) {
     rw_args *reader_args = (rw_args *) malloc(sizeof(rw_args));
+    if (reader_args == NULL) fprintf(stderr, "malloc failed\n");
     reader_args->mutex_reader = &mutex_reader;
     reader_args->mutex_writer = &mutex_writer;
     reader_args->db = &db;

@@ -84,8 +84,9 @@ void* our_producer(void* args){
     int item=produce_int();
 
     while(rand() > RAND_MAX/10000); // simulate time of producing
-
+    //printf("before wait empty %d\n", prod_args->empty->val);
     semaphore_wait(prod_args->empty); // attente d'une place libre
+    //printf("after wait empty %d\n", prod_args->empty->val);
     lock_tts(prod_args->mutex);
     printf("item produced\n");
     // section critique
@@ -102,7 +103,9 @@ void* our_consumer(void* args){
   our_pc_args* cons_args = (our_pc_args *) args;
   for(int i = 0; i < cons_args->stop; i++)
   {
+    //printf("before wait full %d\n", cons_args->full->val);
     semaphore_wait(cons_args->full); // attente d'une place remplie
+    //printf("after wait full %d\n", cons_args->full->val);
     lock_tts(cons_args->mutex);
     // section critique
     item=remove_item();

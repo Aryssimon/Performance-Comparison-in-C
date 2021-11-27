@@ -16,6 +16,7 @@ int test_and_set(int *locker){
 
 int lock_init(int **locker){
   *locker = (int*) malloc(sizeof(int));
+  if (locker == NULL) fprintf(stderr, "malloc failed\n");
   *(*locker) = 0;
   return 0;
 }

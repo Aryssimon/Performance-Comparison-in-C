@@ -13,12 +13,11 @@ const int NB_SECTIONS = 1024;*/
 
 int our_sem_init(semaphore **sem, unsigned int value) {
   *sem = (semaphore*) malloc(sizeof(semaphore));
+  if (sem == NULL) fprintf(stderr, "malloc failed\n");
   (*sem)->val = value;
   lock_init(&((*sem)->mutex));
   lock_init(&((*sem)->wait_mutex));
-  if (value < 1){
-    lock_tts((*sem)->wait_mutex);
-  }
+  lock_tts((*sem)->wait_mutex);
   return 0;
 }
 
@@ -32,11 +31,10 @@ int our_sem_destroy(semaphore **sem) {
 int semaphore_post(semaphore* sem){
   lock_tts(sem->mutex);
   sem->val = sem->val + 1;
-  if (sem->val <= 1) {
-    unlock_tts(sem->mutex);
+  const int value = sem->val;
+  unlock_tts(sem->mutex);
+  if (value <= 0) {
     unlock_tts(sem->wait_mutex);
-  } else {
-    unlock_tts(sem->mutex);
   }
   return 0;
 
@@ -45,11 +43,10 @@ int semaphore_post(semaphore* sem){
 int semaphore_wait(semaphore* sem){
   lock_tts(sem->mutex);
   sem->val = sem->val - 1;
-  if (sem->val <= 0) {
-    unlock_tts(sem->mutex);
+  const int value = sem->val;
+  unlock_tts(sem->mutex);
+  if (value < 0) {
     lock_tts(sem->wait_mutex);
-  } else {
-    unlock_tts(sem->mutex);
   }
   return 0;
 }

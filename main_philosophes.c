@@ -20,6 +20,7 @@ int main(int argc, char *argv[]) {
   phil_args *all_args[N];
   for(int i = 0; i < N; i++) {
     phil_args *args = (phil_args *) malloc(sizeof(phil_args));
+    if (args == NULL) fprintf(stderr, "malloc failed\n");
     args->index = i;
     args->N_BAGUETTES = N_BAGUETTES;
     args->baguette = baguette;

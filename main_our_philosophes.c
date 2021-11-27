@@ -13,13 +13,13 @@ int main(int argc, char *argv[]) {
   int* baguette[N_BAGUETTES];
 
   for(int i = 0; i < N_BAGUETTES; i++) {
-    int error = lock_init(&(baguette[i]));
-    if (error != 0) fprintf(stderr, "pthread_mutex_init failed\n");
+    lock_init(&(baguette[i]));
   }
 
   our_phil_args *all_args[N];
   for(int i = 0; i < N; i++) {
     our_phil_args *args = (our_phil_args *) malloc(sizeof(our_phil_args));
+    if (args == NULL) fprintf(stderr, "malloc failed\n");
     args->index = i;
     args->N_BAGUETTES = N_BAGUETTES;
     args->baguette = baguette;
@@ -35,8 +35,7 @@ int main(int argc, char *argv[]) {
   }
 
   for(int i = 0; i < N; i++) {
-    int error = lock_destroy(&(baguette[i]));
-    if (error != 0) fprintf(stderr, "pthread_mutex_destroy failed\n");
+    lock_destroy(&(baguette[i]));
   }
 
   return 0;

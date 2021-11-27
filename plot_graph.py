@@ -11,7 +11,6 @@ def show_plots(n_threads, averages, stdevs, name, labels):
   """
   fig1 = plt.figure()
   std_scaling = 1
-  #plt.plot(n_threads,averages,color="red",linewidth=1.0, linestyle="-")
   colors = ["red", "green"]
   for i in range(len(averages)):
       plt.errorbar(n_threads, averages[i], yerr=[std * std_scaling for std in stdevs[i]], ecolor=colors[i], color=colors[i], capsize=10.0, label=labels[i])
@@ -22,7 +21,6 @@ def show_plots(n_threads, averages, stdevs, name, labels):
   plt.xlabel("Nombre de threads")
   plt.ylabel("Temps d'exécution en secondes")
   plt.title("Temps moyens observés lors de l'exécution de: "+name)
-  #plt.legend(['Bruxelles','Marseille'], loc = 'upper right')
   plt.grid(True)
 
   plt.savefig(name+"_plot.png")
@@ -58,11 +56,14 @@ def main(input_names):
         if(names[0] == "test_and_set"):
             labels = ["test_and_set", "test_and_test_and_set"]
         else:
-            labels = ["POSIX", "Home Made"]
+            labels = ["POSIX", "Test_and_test_and_set"]
         show_plots(n_threads, averages, stdevs, name, labels)
 
 
 if __name__ == "__main__":
-  input_names=[["philosophes"],["producer_consumer"],["reader_writer"],["test_and_set","test_and_test_and_set"]]
+  input_names=[["out/philosophes","out/our_philosophes"],
+               ["out/producer_consumer","out/our_producer_consumer"],
+               ["out/reader_writer","out/our_reader_writer"],
+               ["test_and_set","test_and_test_and_set"]]
 
   main(input_names)
