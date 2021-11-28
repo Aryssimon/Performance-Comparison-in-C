@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#from sys import argv
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.lib.function_base import average
@@ -62,6 +62,9 @@ def main(input_names):
 
 if __name__ == "__main__":
   print("Start drawing the plots")
+  
+  if not os.path.exists('plots'):
+    os.makedirs('plots')
   
   input_names=[["out/philosophes","out/our_philosophes"],
                ["out/producer_consumer","out/our_producer_consumer"],
