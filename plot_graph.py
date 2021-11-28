@@ -19,8 +19,8 @@ def show_plots(n_threads, averages, stdevs, name, labels):
   plt.title("Temps moyens observés lors de l'exécution de: "+name)
   plt.grid(True)
 
-  plt.savefig(name+"_plot.png")
-  plt.savefig(name+"_plot.pdf")
+  plt.savefig("plots/"+name+"_plot.png")
+  plt.savefig("plots/"+name+"_plot.pdf")
 
   plt.close()
 
@@ -39,7 +39,10 @@ def main(input_names):
                 xs.append(threads)
                 ys.append(time)
             curr_averages, curr_stdevs = [], []
-            n_threads = np.arange(1, int(lines[-1][0]) + 1)
+            if name in ["out/philosophes","out/our_philosophes","out/test_and_set","out/test_and_test_and_set"]:
+            	n_threads = np.arange(1, int(lines[-1][0]) + 1)
+            else:
+            	n_threads = np.arange(2, int(lines[-1][0]) + 1)
             for n in n_threads:
                 filtered_y = [ys[i] for i in range(len(ys)) if xs[i] == n]
                 curr_averages.append(np.average(filtered_y))
@@ -47,17 +50,24 @@ def main(input_names):
 
             averages.append(curr_averages)
             stdevs.append(curr_stdevs)
-        if(names[0] == "test_and_set"):
+        if(names[0] == "out/test_and_set"):
             labels = ["test_and_set", "test_and_test_and_set"]
+            titleName = "tts_and_ts"
+            show_plots(n_threads, averages, stdevs, titleName, labels)
         else:
             labels = ["POSIX", "Test_and_test_and_set"]
-        show_plots(n_threads, averages, stdevs, name, labels)
+            titleName = name[8:]
+        show_plots(n_threads, averages, stdevs, titleName, labels)
 
 
 if __name__ == "__main__":
+  print("Start drawing the plots")
+  
   input_names=[["out/philosophes","out/our_philosophes"],
                ["out/producer_consumer","out/our_producer_consumer"],
                ["out/reader_writer","out/our_reader_writer"],
-               ["test_and_set","test_and_test_and_set"]]
+               ["out/test_and_set","out/test_and_test_and_set"]]
 
   main(input_names)
+  print("Plots successfully drawn")
+  print("The plots are now available in the plots/ folder")

@@ -12,11 +12,12 @@
 
 ## Utilisation
 Once the `make` has been executed :
-* The following files will be created in the **out/ folder**:
+* The **out/ folder** will contain:
     * .csv : _execution times per threads of the c corresponding file_
+    * _+all the compiled executable c programs_
+* The **plots/ folder** will contain:
     * .pdf : _pdf plots computed from the corresponding CSV files_
     * .png : _png plots computed from the corresponding CSV files_
-    * _+all the compiled executable c programs_
 
 > Execute command `make clean`  to clean the out/ folder.
 
