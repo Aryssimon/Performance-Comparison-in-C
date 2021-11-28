@@ -21,8 +21,6 @@ def show_plots(n_threads, averages, stdevs, name, labels):
   plt.savefig(name+"_plot.png")
   plt.savefig(name+"_plot.pdf")
 
-  plt.show()
-
   plt.close()
 
 def main(input_names):
