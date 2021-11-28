@@ -1,4 +1,5 @@
-from sys import argv
+#!/usr/bin/env python
+#from sys import argv
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.lib.function_base import average
