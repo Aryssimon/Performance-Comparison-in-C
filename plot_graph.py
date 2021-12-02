@@ -53,7 +53,6 @@ def main(input_names):
         if(names[0] == "out/test_and_set"):
             labels = ["test_and_set", "test_and_test_and_set"]
             titleName = "tts_and_ts"
-            show_plots(n_threads, averages, stdevs, titleName, labels)
         else:
             labels = ["POSIX", "Test_and_test_and_set"]
             titleName = name[8:]
