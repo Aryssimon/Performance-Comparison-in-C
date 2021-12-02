@@ -41,7 +41,7 @@ void* producer(void* args)
   pc_args* prod_args = (pc_args *) args;
   for(int i = 0; i < prod_args->stop; i++)
   {
-    int item=produce_int();
+    item=produce_int();
     while(rand() > RAND_MAX/10000);
 
     sem_wait(prod_args->empty);
@@ -77,7 +77,7 @@ void* our_producer(void* args){
   our_pc_args* prod_args = (our_pc_args *) args;
   for(int i = 0; i < prod_args->stop; i++)
   {
-    int item=produce_int();
+    item=produce_int();
     while(rand() > RAND_MAX/10000);
 
     semaphore_wait(prod_args->empty);
