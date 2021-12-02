@@ -18,7 +18,7 @@ for csv in ${all_csv[@]}; do
 done
 
 echo " "
-echo "Start computing the executions times"
+echo "Start computing the execution times"
 
 echo " "
 echo "Philosophes:"
