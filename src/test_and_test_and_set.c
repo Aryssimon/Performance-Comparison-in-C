@@ -5,7 +5,7 @@
 #include "../headers/test_and_test_and_set.h"
 
 int counter = 0;
-const int NB_SECTIONS = 1024;
+const int NB_SECTIONS = 6400;
 
 int test_and_set(int *locker){
   int value = 1;
