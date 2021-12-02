@@ -6,7 +6,9 @@
 ## Installation
 
 1. Open a terminal in the root folder
-2. Use `make` to compile and produce the CSV files and the plots
+2. Use `make` to compile, execute and plots the results.
+
+> Or one step at a time by running the commands: make compile, make execute, make plots
 
 
 
