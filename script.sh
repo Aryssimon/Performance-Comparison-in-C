@@ -12,20 +12,6 @@ out_ts="out/test_and_set_perf_eval.csv"
 out_tts="out/test_and_test_and_set_perf_eval.csv"
 all_csv=($out_philosophes $out_our_philosophes $out_producer_consumer $out_our_producer_consumer $out_reader_writer $out_our_reader_writer $out_ts $out_tts)
 
-echo "Start compiling C files"
-
-gcc "main_philosophes".c "src/philosophes".c "src/test_and_test_and_set".c -o "out/philosophes" -lpthread
-gcc "main_producer_consumer".c "src/producer_consumer".c "src/test_and_test_and_set".c "src/our_semaphore".c -o "out/producer_consumer" -lpthread
-gcc "main_reader_writer".c "src/reader_writer".c "src/test_and_test_and_set".c "src/our_semaphore".c -o "out/reader_writer" -lpthread
-gcc "main_our_philosophes".c "src/philosophes".c "src/test_and_test_and_set".c -o "out/our_philosophes" -lpthread
-gcc "main_our_producer_consumer".c "src/producer_consumer".c "src/test_and_test_and_set".c "src/our_semaphore".c -o "out/our_producer_consumer" -lpthread
-gcc "main_our_reader_writer".c "src/reader_writer".c "src/test_and_test_and_set".c "src/our_semaphore".c -o "out/our_reader_writer" -lpthread
-gcc "main_test_and_set".c "src/test_and_set".c -o "out/test_and_set" -lpthread
-gcc "main_test_and_test_and_set".c "src/test_and_test_and_set".c -o "out/test_and_test_and_set" -lpthread
-
-echo "Files successfully compiled"
-echo " "
-
 for csv in ${all_csv[@]}; do
   echo "File created: $csv"
   printf "num_threads, total_time_elapsed\n" > $csv
