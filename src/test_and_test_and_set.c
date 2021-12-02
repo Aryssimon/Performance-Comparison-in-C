@@ -55,5 +55,5 @@ void* thread_work(void* arg){
     counter++;
     unlock_tts(mutex);
   }
-  pthread_exit (NULL);
+  return NULL;
 }

@@ -32,7 +32,7 @@ void* reader(void* args) {
     }
     pthread_mutex_unlock(reader_args->mutex_reader);
   }
-  pthread_exit (NULL);
+  return NULL;
 }
 
 void* writer(void* args) {
@@ -55,7 +55,7 @@ void* writer(void* args) {
     pthread_mutex_unlock(writer_args->mutex_writer);
 
   }
-  pthread_exit (NULL);
+  return NULL;
 }
 
 void* our_reader(void* args){
@@ -77,7 +77,7 @@ void* our_reader(void* args){
     }
     unlock_tts(reader_args->mutex_reader);
   }
-  pthread_exit (NULL);
+  return NULL;
 }
 
 void* our_writer(void* args){
@@ -100,5 +100,5 @@ void* our_writer(void* args){
     unlock_tts(writer_args->mutex_writer);
 
   }
-  pthread_exit (NULL);
+  return NULL;
 }

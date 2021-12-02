@@ -52,7 +52,7 @@ void* producer(void* args)
 
     sem_post(prod_args->full);
   }
-  pthread_exit (NULL);
+  return NULL;
 }
 
 void* consumer(void* args)
@@ -69,7 +69,7 @@ void* consumer(void* args)
     sem_post(cons_args->empty);
     while(rand() > RAND_MAX/10000);
   }
-  pthread_exit (NULL);
+  return NULL;
 }
 
 void* our_producer(void* args){
@@ -88,7 +88,7 @@ void* our_producer(void* args){
 
     semaphore_post(prod_args->full);
   }
-  pthread_exit (NULL);
+  return NULL;
 }
 
 void* our_consumer(void* args){
@@ -104,5 +104,5 @@ void* our_consumer(void* args){
     semaphore_post(cons_args->empty);
     while(rand() > RAND_MAX/10000);
   }
-  pthread_exit (NULL);
+  return NULL;
 }

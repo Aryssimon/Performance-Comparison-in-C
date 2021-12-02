@@ -24,7 +24,7 @@ void* philosophe(void* args) {
     pthread_mutex_unlock(&baguette[left]);
     pthread_mutex_unlock(&baguette[right]);
   }
-  pthread_exit (NULL);
+  return NULL;
 }
 
 void* our_philosophe(void* args) {
@@ -44,5 +44,5 @@ void* our_philosophe(void* args) {
     unlock_tts(baguette[left]);
     unlock_tts(baguette[right]);
   }
-  pthread_exit (NULL);
+  return NULL;
 }
