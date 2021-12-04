@@ -24,4 +24,4 @@ clean:
 	@rm -f plots/*
 	@echo "out/ and plots/ folders cleaned"
 
-.PHONY: clean
+.PHONY: clean plots
