@@ -16,7 +16,9 @@ typedef struct {
 
 void* philosophe(void* args);
 
-void* our_philosophe(void* args);
+void* tts_philosophe(void* args);
+
+void* ts_philosophe(void* args);
 
 
 #endif //PHILOSOPHE

@@ -1,6 +1,6 @@
 #ifndef READER_WRITER
 #define READER_WRITER
-#include "our_semaphore.h"
+#include "tts_semaphore.h"
 
 typedef struct {
   pthread_mutex_t* mutex_reader;
@@ -20,9 +20,13 @@ void* reader(void* args);
 
 void* writer(void* args);
 
-void* our_reader(void* args);
+void* tts_reader(void* args);
 
-void* our_writer(void* args);
+void* tts_writer(void* args);
+
+void* ts_reader(void* args);
+
+void* ts_writer(void* args);
 
 
 #endif //READER_WRITER

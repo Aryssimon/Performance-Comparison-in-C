@@ -4,8 +4,11 @@
 #include <semaphore.h>
 
 #include "../headers/producer_consumer.h"
+#include "../headers/test_and_set.h"
 #include "../headers/test_and_test_and_set.h"
-#include "../headers/our_semaphore.h"
+#include "../headers/tts_semaphore.h"
+#include "../headers/ts_semaphore.h"
+
 
 #define N 8
 
@@ -72,7 +75,7 @@ void* consumer(void* args)
   return NULL;
 }
 
-void* our_producer(void* args){
+void* tts_producer(void* args){
   int item;
   our_pc_args* prod_args = (our_pc_args *) args;
   for(int i = 0; i < prod_args->stop; i++)
@@ -80,28 +83,63 @@ void* our_producer(void* args){
     item=produce_int();
     while(rand() > RAND_MAX/10000);
 
-    semaphore_wait(prod_args->empty);
+    semaphore_wait_tts(prod_args->empty);
 
     lock_tts(prod_args->mutex);
     insert_item(item);
     unlock_tts(prod_args->mutex);
 
-    semaphore_post(prod_args->full);
+    semaphore_post_tts(prod_args->full);
   }
   return NULL;
 }
 
-void* our_consumer(void* args){
+void* tts_consumer(void* args){
   our_pc_args* cons_args = (our_pc_args *) args;
   for(int i = 0; i < cons_args->stop; i++)
   {
-    semaphore_wait(cons_args->full);
+    semaphore_wait_tts(cons_args->full);
 
     lock_tts(cons_args->mutex);
     remove_item();
     unlock_tts(cons_args->mutex);
 
-    semaphore_post(cons_args->empty);
+    semaphore_post_tts(cons_args->empty);
+    while(rand() > RAND_MAX/10000);
+  }
+  return NULL;
+}
+
+void* ts_producer(void* args){
+  int item;
+  our_pc_args* prod_args = (our_pc_args *) args;
+  for(int i = 0; i < prod_args->stop; i++)
+  {
+    item=produce_int();
+    while(rand() > RAND_MAX/10000);
+
+    semaphore_wait_ts(prod_args->empty);
+
+    lock_ts(prod_args->mutex);
+    insert_item(item);
+    unlock_ts(prod_args->mutex);
+
+    semaphore_post_ts(prod_args->full);
+  }
+  return NULL;
+}
+
+void* ts_consumer(void* args){
+  our_pc_args* cons_args = (our_pc_args *) args;
+  for(int i = 0; i < cons_args->stop; i++)
+  {
+    semaphore_wait_ts(cons_args->full);
+
+    lock_ts(cons_args->mutex);
+    remove_item();
+    unlock_ts(cons_args->mutex);
+
+    semaphore_post_ts(cons_args->empty);
     while(rand() > RAND_MAX/10000);
   }
   return NULL;

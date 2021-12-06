@@ -5,7 +5,7 @@
 
 #include "headers/producer_consumer.h"
 #include "headers/test_and_test_and_set.h"
-#include "headers/our_semaphore.h"
+#include "headers/tts_semaphore.h"
 
 int main(int argc, char *argv[]) {
   const int NB_CONSUMERS = atoi(argv[1]);
@@ -18,10 +18,10 @@ int main(int argc, char *argv[]) {
 
   srand(time(NULL));
 
-  lock_init(&mutex);
+  lock_init_tts(&mutex);
 
-  our_sem_init(&empty,8);
-  our_sem_init(&full,0);
+  tts_sem_init(&empty,8);
+  tts_sem_init(&full,0);
 
   pthread_t consumers[NB_CONSUMERS];
   pthread_t producers[NB_PRODUCERS];
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     prod_args->full = full;
     prod_args->stop = nb_to_produce[i];
     all_prod_args[i] = prod_args;
-    int error = pthread_create(&(producers[i]), NULL, &our_producer, (void *)all_prod_args[i]);
+    int error = pthread_create(&(producers[i]), NULL, &tts_producer, (void *)all_prod_args[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
   }
 
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     cons_args->full = full;
     cons_args->stop = nb_to_consume[i];
     all_cons_args[i] = cons_args;
-    int error = pthread_create(&(consumers[i]), NULL, &our_consumer, (void *)all_cons_args[i]);
+    int error = pthread_create(&(consumers[i]), NULL, &tts_consumer, (void *)all_cons_args[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
   }
 
@@ -69,10 +69,10 @@ int main(int argc, char *argv[]) {
     free(all_cons_args[i]);
   }
 
-  lock_destroy(&mutex);
+  lock_destroy_tts(&mutex);
 
-  our_sem_destroy(&empty);
-  our_sem_destroy(&full);
+  tts_sem_destroy(&empty);
+  tts_sem_destroy(&full);
 
   return 0;
 }

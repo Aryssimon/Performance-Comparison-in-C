@@ -4,6 +4,7 @@
 
 #include "../headers/philosophes.h"
 #include "../headers/test_and_test_and_set.h"
+#include "../headers/test_and_set.h"
 
 const int CYCLES = 100000;
 
@@ -27,7 +28,7 @@ void* philosophe(void* args) {
   return NULL;
 }
 
-void* our_philosophe(void* args) {
+void* tts_philosophe(void* args) {
   our_phil_args *arguments = (our_phil_args *) args;
   int **baguette = arguments->baguette;
   int left = arguments->index;
@@ -43,6 +44,26 @@ void* our_philosophe(void* args) {
     }
     unlock_tts(baguette[left]);
     unlock_tts(baguette[right]);
+  }
+  return NULL;
+}
+
+void* ts_philosophe(void* args) {
+  our_phil_args *arguments = (our_phil_args *) args;
+  int **baguette = arguments->baguette;
+  int left = arguments->index;
+  int right = (left + 1) % arguments->N_BAGUETTES;
+  for(int i = 0; i < CYCLES; i++) {
+    if(left<right) {
+      lock_ts(baguette[left]);
+      lock_ts(baguette[right]);
+    }
+    else {
+      lock_ts(baguette[right]);
+      lock_ts(baguette[left]);
+    }
+    unlock_ts(baguette[left]);
+    unlock_ts(baguette[right]);
   }
   return NULL;
 }

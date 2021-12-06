@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
   int* baguette[N_BAGUETTES];
 
   for(int i = 0; i < N_BAGUETTES; i++) {
-    lock_init(&(baguette[i]));
+    lock_init_tts(&(baguette[i]));
   }
 
   our_phil_args *all_args[N];
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     args->N_BAGUETTES = N_BAGUETTES;
     args->baguette = baguette;
     all_args[i] = args;
-    int error = pthread_create(&(phil[i]), NULL, &our_philosophe, (void *) all_args[i]);
+    int error = pthread_create(&(phil[i]), NULL, &tts_philosophe, (void *) all_args[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
   }
 
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   }
 
   for(int i = 0; i < N; i++) {
-    lock_destroy(&(baguette[i]));
+    lock_destroy_tts(&(baguette[i]));
   }
 
   return 0;

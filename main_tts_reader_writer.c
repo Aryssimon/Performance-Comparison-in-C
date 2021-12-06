@@ -5,7 +5,7 @@
 
 #include "headers/reader_writer.h"
 #include "headers/test_and_test_and_set.h"
-#include "headers/our_semaphore.h"
+#include "headers/tts_semaphore.h"
 
 
 int main(int argc, char *argv[]) {
@@ -17,11 +17,11 @@ int main(int argc, char *argv[]) {
   semaphore* db;
   semaphore* reader_sem;
 
-  our_sem_init(&reader_sem, 1);
-  our_sem_init(&db, 1);
+  tts_sem_init(&reader_sem, 1);
+  tts_sem_init(&db, 1);
 
-  lock_init(&mutex_reader);
-  lock_init(&mutex_writer);
+  lock_init_tts(&mutex_reader);
+  lock_init_tts(&mutex_writer);
 
   pthread_t writers[NB_WRITERS];
   pthread_t readers[NB_READERS];
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     writer_args->db = db;
     writer_args->reader_sem = reader_sem;
     all_writers_args[i] = writer_args;
-    int error = pthread_create(&(writers[i]), NULL, &our_writer, (void *) all_writers_args[i]);
+    int error = pthread_create(&(writers[i]), NULL, &tts_writer, (void *) all_writers_args[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
   }
 
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     reader_args->db = db;
     reader_args->reader_sem = reader_sem;
     all_readers_args[i] = reader_args;
-    int error = pthread_create(&(readers[i]), NULL, &our_reader, (void *) all_readers_args[i]);
+    int error = pthread_create(&(readers[i]), NULL, &tts_reader, (void *) all_readers_args[i]);
     if (error != 0) fprintf(stderr, "pthread_create failed\n");
   }
 
@@ -63,11 +63,11 @@ int main(int argc, char *argv[]) {
     free(all_readers_args[i]);
   }
 
-  lock_destroy(&mutex_reader);
-  lock_destroy(&mutex_writer);
+  lock_destroy_tts(&mutex_reader);
+  lock_destroy_tts(&mutex_writer);
 
-  our_sem_destroy(&reader_sem);
-  our_sem_destroy(&db);
+  tts_sem_destroy(&reader_sem);
+  tts_sem_destroy(&db);
 
   return 0;
 }

@@ -1,6 +1,7 @@
 #ifndef PRODUCER_CONSUMER
 #define PRODUCER_CONSUMER
-#include "our_semaphore.h"
+
+#include "tts_semaphore.h"
 
 typedef struct {
   pthread_mutex_t* mutex;
@@ -27,9 +28,13 @@ void* producer(void* args);
 
 void* consumer(void* args);
 
-void* our_producer(void* args);
+void* tts_producer(void* args);
 
-void* our_consumer(void* args);
+void* tts_consumer(void* args);
+
+void* ts_producer(void* args);
+
+void* ts_consumer(void* args);
 
 
 #endif //PRODUCER_CONSUMER

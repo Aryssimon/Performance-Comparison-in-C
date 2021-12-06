@@ -7,7 +7,7 @@ from numpy.lib.function_base import average
 def show_plots(n_threads, averages, stdevs, name, labels):
   fig1 = plt.figure()
   std_scaling = 1
-  colors = ["red", "green"]
+  colors = ["red", "green", "blue"]
   for i in range(len(averages)):
       plt.errorbar(n_threads, averages[i], yerr=[std * std_scaling for std in stdevs[i]], ecolor=colors[i], color=colors[i], capsize=10.0, label=labels[i])
 
@@ -39,7 +39,7 @@ def main(input_names):
                 xs.append(threads)
                 ys.append(time)
             curr_averages, curr_stdevs = [], []
-            if name in ["out/philosophes","out/our_philosophes","out/test_and_set","out/test_and_test_and_set"]:
+            if name in ["out/philosophes","out/ts_philosophes","out/tts_philosophes","out/test_and_set","out/test_and_test_and_set"]:
             	n_threads = np.arange(1, int(lines[-1][0]) + 1)
             else:
             	n_threads = np.arange(2, int(lines[-1][0]) + 1)
@@ -54,7 +54,7 @@ def main(input_names):
             labels = ["test_and_set", "test_and_test_and_set"]
             titleName = "tts_and_ts"
         else:
-            labels = ["POSIX", "Test_and_test_and_set"]
+            labels = ["POSIX", "Test_and_set", "Test_and_test_and_set"]
             titleName = name[8:]
         show_plots(n_threads, averages, stdevs, titleName, labels)
 
@@ -65,10 +65,10 @@ if __name__ == "__main__":
   if not os.path.exists('plots'):
     os.makedirs('plots')
   
-  input_names=[["out/philosophes","out/our_philosophes"],
-               ["out/producer_consumer","out/our_producer_consumer"],
-               ["out/reader_writer","out/our_reader_writer"],
-               ["out/test_and_set","out/test_and_test_and_set"]]
+  input_names=[["out/philosophes", "out/ts_philosophes", "out/tts_philosophes"],
+               ["out/producer_consumer", "out/ts_producer_consumer", "out/tts_producer_consumer"],
+               ["out/reader_writer", "out/ts_reader_writer", "out/tts_reader_writer"],
+               ["out/test_and_set", "out/test_and_test_and_set"]]
 
   main(input_names)
   print("Plots successfully drawn")
