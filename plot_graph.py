@@ -10,9 +10,14 @@ def show_plots(n_threads, averages, stdevs, name, labels):
   colors = ["red", "green", "blue"]
   for i in range(len(averages)):
       plt.errorbar(n_threads, averages[i], yerr=[std * std_scaling for std in stdevs[i]], ecolor=colors[i], color=colors[i], capsize=10.0, label=labels[i])
-
+  
+  max_averages = 0
+  for i in range(len(averages)):
+      if max(averages[i]) > max_averages:
+          max_averages = max(averages[i])
   plt.legend()
   plt.xlim(0, max(n_threads) + 1)
+  plt.ylim(0, max_averages*1.3)
 
   plt.xlabel("Nombre de threads")
   plt.ylabel("Temps d'exécution en secondes")
